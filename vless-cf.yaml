@@ -86,12 +86,12 @@ dns:
       - 0.0.0.0/32
 
 proxies:
-  - {"name":"majik1","type":"vless","server":"acjp2.cloudflarest.link","port":443,"uuid":"111018db-5751-488c-ab84-581178405765","tls":true,"servername":"majik.heyiconan.workers.dev","network":"ws","ws-opts":{"path":"/?ed=2048","headers":{"host":"majik.heyiconan.workers.dev"}},"client-fingerprint":"randomized"}
+  - {"name":"majik1","type":"vless","server":"bestcf.onecf.eu.org","port":443,"uuid":"111018db-5751-488c-ab84-581178405765","tls":true,"servername":"majik.heyiconan.workers.dev","network":"ws","ws-opts":{"path":"/?ed=2048","headers":{"host":"majik.heyiconan.workers.dev"}},"client-fingerprint":"randomized"}
   - {"name":"majik2","type":"vless","server":"acsg3.cloudflarest.link","port":2082,"uuid":"111018db-5751-488c-ab84-581178405765","tls":false,"servername":"majik.heyiconan.workers.dev","network":"ws","ws-opts":{"path":"/?ed=2048","headers":{"host":"majik.heyiconan.workers.dev"}},"client-fingerprint":"randomized"}
-  - {"name":"majik3","type":"vless","server":"acsg.cloudflarest.link","port":2082,"uuid":"111018db-5751-488c-ab84-581178405765","tls":false,"servername":"majik.heyiconan.workers.dev","network":"ws","ws-opts":{"path":"/?ed=2048","headers":{"host":"majik.heyiconan.workers.dev"}},"client-fingerprint":"randomized"}
-  - {"name":"eayon1","type":"vless","server":"acjp2.cloudflarest.link","port":443,"uuid":"111018db-5751-488c-ab84-581178405765","tls":true,"servername":"eayon.heyiconan.workers.dev","network":"ws","ws-opts":{"path":"/?ed=2048","headers":{"host":"eayon.heyiconan.workers.dev"}},"client-fingerprint":"randomized"}
+  - {"name":"majik3","type":"vless","server":"104.19.62.86","port":2082,"uuid":"111018db-5751-488c-ab84-581178405765","tls":false,"servername":"majik.heyiconan.workers.dev","network":"ws","ws-opts":{"path":"/?ed=2048","headers":{"host":"majik.heyiconan.workers.dev"}},"client-fingerprint":"randomized"}
+  - {"name":"eayon1","type":"vless","server":"bestcf.onecf.eu.org","port":443,"uuid":"111018db-5751-488c-ab84-581178405765","tls":true,"servername":"eayon.heyiconan.workers.dev","network":"ws","ws-opts":{"path":"/?ed=2048","headers":{"host":"eayon.heyiconan.workers.dev"}},"client-fingerprint":"randomized"}
   - {"name":"eayon2","type":"vless","server":"acsg3.cloudflarest.link","port":2082,"uuid":"111018db-5751-488c-ab84-581178405765","tls":false,"servername":"eayon.heyiconan.workers.dev","network":"ws","ws-opts":{"path":"/?ed=2048","headers":{"host":"eayon.heyiconan.workers.dev"}},"client-fingerprint":"randomized"}
-  - {"name":"eayon3","type":"vless","server":"acsg.cloudflarest.link","port":2082,"uuid":"111018db-5751-488c-ab84-581178405765","tls":false,"servername":"eayon.heyiconan.workers.dev","network":"ws","ws-opts":{"path":"/?ed=2048","headers":{"host":"eayon.heyiconan.workers.dev"}},"client-fingerprint":"randomized"}
+  - {"name":"eayon3","type":"vless","server":"104.19.62.86","port":2082,"uuid":"111018db-5751-488c-ab84-581178405765","tls":false,"servername":"eayon.heyiconan.workers.dev","network":"ws","ws-opts":{"path":"/?ed=2048","headers":{"host":"eayon.heyiconan.workers.dev"}},"client-fingerprint":"randomized"}
 proxy-groups:
   - name: 🚀 节点选择
     type: select
