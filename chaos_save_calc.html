@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡厄思存档计算器 | Chaos Archive Calculator</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 统一的 Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#8B5CF6',
+                        accent: '#F472B6',
+                        dark: '#0F172A',
+                        light: '#F8FAFC',
+                        card: {
+                            basic: '#7E22CE',
+                            unique: '#0EA5E9',
+                            neutral: '#64748B',
+                            monster: '#DC2626',
+                            forbidden: '#10B981'
+                        },
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        success: '#10B981'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['Cinzel', 'serif']
+                    },
+                    animation: {
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'pulse-warning': 'pulse-warning 2s ease-in-out infinite alternate',
+                        'pulse-danger': 'pulse-danger 1.5s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { 'text-shadow': '0 0 5px #fff, 0 0 10px #fff, 0 0 15px #3B82F6, 0 0 20px #3B82F6' },
+                            '100%': { 'text-shadow': '0 0 10px #fff, 0 0 20px #fff, 0 0 30px #8B5CF6, 0 0 40px #8B5CF6' }
+                        },
+                        'pulse-warning': {
+                            '0%': { 'text-shadow': '0 0 5px #fff, 0 0 10px #fff, 0 0 15px #F59E0B, 0 0 20px #F59E0B' },
+                            '100%': { 'text-shadow': '0 0 10px #fff, 0 0 20px #fff, 0 0 30px #F59E0B, 0 0 40px #F59E0B' }
+                        },
+                        'pulse-danger': {
+                            '0%': { 'text-shadow': '0 0 5px #fff, 0 0 10px #fff, 0 0 15px #EF4444, 0 0 20px #EF4444' },
+                            '100%': { 'text-shadow': '0 0 10px #fff, 0 0 20px #fff, 0 0 30px #EF4444, 0 0 40px #EF4444' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    },
+                    backgroundImage: {
+                        'card-pattern': 'url("https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/940b90c1bc1b465c82ff0f648bc22975~tplv-a9rns2rl98-image.image?rcl=20251112170317AAEC5951FCA2D2B739D5&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1765530216&x-signature=UjhKuWTeK7BbndgzplpRO27O%2BgI%3D")',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-glow {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #3B82F6, 0 0 20px #3B82F6;
+            }
+            .card-border {
+                box-shadow: 0 0 10px rgba(59, 130, 246, 0.5), inset 0 0 10px rgba(59, 130, 246, 0.5);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(59, 130, 246, 0.7);
+            }
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            .scrollbar-hidden::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hidden {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+    <!-- 自定义字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-dark text-light min-h-screen font-sans">
+    <!-- 背景图 -->
+    <div class="fixed inset-0 bg-cover bg-center bg-card-pattern opacity-20 z-0"></div>
+    
+    <!-- 主容器 -->
+    <div class="relative z-10 container mx-auto px-4 py-8">
+        <!-- 标题区域 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-glow animate-glow mb-2">卡厄思存档计算器</h1>
+            <!-- 已移除英文标题 -->
+        </header>
+        
+        <!-- 主要内容区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧：卡牌操作区 -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- 容量设置 -->
+                <div class="glass-effect rounded-xl p-6 card-border">
+                    <h2 class="text-2xl font-display font-semibold mb-4 text-primary">容量设置</h2>
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <!-- PT容量上限设置 -->
+                        <div class="flex-1">
+                            <label for="pt-capacity" class="block text-sm font-medium text-gray-300 mb-2">PT容量上限</label>
+                            <div class="flex items-center gap-4">
+                                <input type="range" id="pt-capacity" min="10" max="300" step="10" value="100" 
+                                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary">
+                                <span id="pt-capacity-value" class="text-xl font-bold text-primary min-w-[50px] text-center">100</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">数值范围：10~300，且必须为10的倍数</p>
+                        </div>
+                        
+                        <!-- 重置按钮 -->
+                        <div class="flex items-center">
+                            <button id="reset-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 z-10">
+                                <i class="fa fa-refresh"></i> 重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 卡牌管理 -->
+                <div class="glass-effect rounded-xl p-6 card-border">
+                    <h2 class="text-2xl font-display font-semibold mb-4 text-primary">卡牌管理</h2>
+                    
+                    <!-- 添加卡牌 -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium mb-3 text-secondary">添加卡牌</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex items-center gap-3">
+                                <label for="card-type" class="text-sm font-medium text-gray-300 min-w-[100px]">卡牌类型</label>
+                                <select id="card-type" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="unique">独特卡牌 (0PT)</option>
+                                    <option value="neutral">中立卡牌 (20PT)</option>
+                                    <option value="monster">怪物卡牌 (80PT)</option>
+                                    <option value="forbidden">禁忌卡牌 (20PT)</option>
+                                </select>
+                                <button id="add-card-btn" class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                                    添加
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 当前卡牌列表 -->
+                    <div>
+                        <h3 class="text-lg font-medium mb-3 text-secondary">当前卡牌</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="card-list">
+                            <!-- 卡牌将通过JS动态添加 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 卡牌操作 -->
+                <div class="glass-effect rounded-xl p-6 card-border">
+                    <h2 class="text-2xl font-display font-semibold mb-4 text-primary">卡牌操作</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 移除卡牌 -->
+                        <div>
+                            <h3 class="text-lg font-medium mb-3 text-secondary">移除卡牌</h3>
+                            <div class="flex items-center gap-3">
+                                <select id="remove-card-select" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="">选择要移除的卡牌...</option>
+                                </select>
+                                <button id="remove-card-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                                    移除
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">移除价值：首次0PT，之后10PT、30PT、50PT、70PT（最高）</p>
+                        </div>
+                        
+                        <!-- 复制卡牌 -->
+                        <div>
+                            <h3 class="text-lg font-medium mb-3 text-secondary">复制卡牌</h3>
+                            <div class="flex items-center gap-3">
+                                <select id="copy-card-select" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="">选择要复制的卡牌...</option>
+                                </select>
+                                <button id="copy-card-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                                    复制
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">复制价值：首次0PT，之后10PT、30PT、50PT、70PT（最高）</p>
+                        </div>
+                        
+                        <!-- 转化卡牌 -->
+                        <div>
+                            <h3 class="text-lg font-medium mb-3 text-secondary">转化卡牌</h3>
+                            <div class="flex items-center gap-3">
+                                <select id="convert-card-select" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="">选择要转化的卡牌...</option>
+                                </select>
+                                <button id="convert-card-btn" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                                    转化
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">转化价值：10PT，转化为中立卡牌</p>
+                        </div>
+                        
+                        <!-- 强化卡牌 -->
+                        <div>
+                            <h3 class="text-lg font-medium mb-3 text-secondary">强化卡牌</h3>
+                            <div class="flex flex-col gap-3">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <select id="enhance-card-select" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="">选择要强化的卡牌...</option>
+                                    </select>
+                                    <select id="enhance-type-select" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="sparkle">灵光一闪 (+10PT)</option>
+                                        <option value="divine">神之一闪 (+20PT)</option>
+                                    </select>
+                                    <button id="enhance-card-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap">
+                                        强化
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-400">每张卡牌仅可强化一次</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：PT值计算结果与历史记录 -->
+            <div class="space-y-8">
+                <!-- PT值计算结果 -->
+                <div class="glass-effect rounded-xl p-6 card-border sticky top-4">
+                    <h2 class="text-2xl font-display font-semibold mb-4 text-primary">PT值计算</h2>
+                    
+                    <div class="space-y-4">
+                        <!-- PT容量上限 -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">PT容量上限：</span>
+                            <span id="display-pt-capacity" class="text-xl font-bold text-white">100</span>
+                        </div>
+                        
+                        <!-- 卡牌价值 -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">卡牌价值：</span>
+                            <span id="display-cards-value" class="text-xl font-bold text-green-400">0</span>
+                        </div>
+                        
+                        <!-- 移除价值 -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">移除价值：</span>
+                            <span id="display-remove-value" class="text-xl font-bold text-red-400">0</span>
+                        </div>
+                        
+                        <!-- 复制价值 -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">复制价值：</span>
+                            <span id="display-copy-value" class="text-xl font-bold text-yellow-400">0</span>
+                        </div>
+                        
+                        <!-- 转化价值 -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">转化价值：</span>
+                            <span id="display-convert-value" class="text-xl font-bold text-blue-400">0</span>
+                        </div>
+                        
+                        <!-- 强化价值 -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">强化价值：</span>
+                            <span id="display-enhance-value" class="text-xl font-bold text-purple-400">0</span>
+                        </div>
+                        
+                        <!-- 总PT值 -->
+                        <div class="border-t border-gray-700 pt-4 mt-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xl font-semibold text-gray-200">总PT值：</span>
+                                <span id="display-total-pt" class="text-3xl font-bold text-glow animate-glow">0</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 剩余PT容量 -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-semibold text-gray-200">剩余PT容量：</span>
+                            <span id="display-remaining-pt" class="text-3xl font-bold text-success animate-glow">100</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 操作历史记录 -->
+                <div class="glass-effect rounded-xl p-6 card-border">
+                    <h2 class="text-2xl font-display font-semibold mb-4 text-primary">操作历史</h2>
+                    
+                    <div class="max-h-96 overflow-y-auto scrollbar-hidden" id="history-list">
+                        <!-- 历史记录将通过JS动态添加 -->
+                        <div class="text-gray-400 text-center py-4">暂无操作记录</div>
+                    </div>
+                </div>
+                
+                <!-- 存档管理 -->
+                <div class="glass-effect rounded-xl p-6 card-border">
+                    <h2 class="text-2xl font-display font-semibold mb-4 text-primary">存档管理</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex gap-2">
+                            <input type="text" id="save-name" placeholder="存档名称" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                            <button id="save-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                                <i class="fa fa-save"></i> 保存
+                            </button>
+                        </div>
+                        
+                        <div>
+                            <select id="load-save-select" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                <option value="">选择要加载的存档...</option>
+                            </select>
+                            <div class="flex gap-2 mt-2">
+                                <button id="load-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                                    <i class="fa fa-folder-open"></i> 加载
+                                </button>
+                                <button id="delete-save-btn" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                                    <i class="fa fa-trash"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <footer class="mt-12 text-center text-gray-400 text-sm">
+            <p>卡厄思存档计算器 &copy; 2025 | 为卡厄思游戏玩家设计</p>
+        </footer>
+    </div>
+    
+    <!-- 卡牌模板 -->
+    <template id="card-template">
+        <div class="card bg-gray-900 rounded-lg overflow-hidden card-border card-hover" data-card-id="">
+            <div class="p-4">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="card-icon w-10 h-10 rounded-full flex items-center justify-center bg-card-basic">
+                            <img src="" alt="Card Icon" class="w-6 h-6 object-contain">
+                        </div>
+                        <div>
+                            <h4 class="font-medium card-name">基础卡牌</h4>
+                            <p class="text-xs text-gray-400 card-type">基础卡牌</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-medium px-2 py-1 rounded-full bg-gray-800 card-value">0 PT</span>
+                </div>
+                
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-xs text-gray-500 card-id">ID: </span>
+                    <div class="flex items-center gap-1">
+                        <span class="text-xs text-gray-400 card-enhancement-status">未强化</span>
+                        <div class="card-enhancement-icon hidden w-4 h-4 rounded-full bg-blue-500"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- 历史记录模板 -->
+    <template id="history-template">
+        <div class="history-item flex items-center gap-2 p-2 border-b border-gray-800 last:border-0">
+            <div class="history-icon w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-primary">
+                <i class="fa fa-plus"></i>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm history-action">添加了卡牌</p>
+                <p class="text-xs text-gray-400 history-details">基础卡牌 (+0 PT)</p>
+            </div>
+            <span class="text-xs text-gray-500 history-timestamp">刚刚</span>
+        </div>
+    </template>
+    
+    <script>
+        // 卡牌数据
+        const cardTypes = {
+            basic: {
+                name: '基础卡牌',
+                value: 0,
+                color: 'bg-card-basic',
+                icon: 'https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/2e7a9af9430e452d9b3d4cc216058907~tplv-a9rns2rl98-image.image?rcl=20251112170317AAEC5951FCA2D2B739D5&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1765530237&x-signature=hgEkcIZlS3TtP3VifAaDP3J6%2F3U%3D'
+            },
+            unique: {
+                name: '独特卡牌',
+                value: 0,
+                color: 'bg-card-unique',
+                icon: 'https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/2e7a9af9430e452d9b3d4cc216058907~tplv-a9rns2rl98-image.image?rcl=20251112170317AAEC5951FCA2D2B739D5&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1765530237&x-signature=hgEkcIZlS3TtP3VifAaDP3J6%2F3U%3D'
+            },
+            neutral: {
+                name: '中立卡牌',
+                value: 20,
+                color: 'bg-card-neutral',
+                icon: 'https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/2e7a9af9430e452d9b3d4cc216058907~tplv-a9rns2rl98-image.image?rcl=20251112170317AAEC5951FCA2D2B739D5&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1765530237&x-signature=hgEkcIZlS3TtP3VifAaDP3J6%2F3U%3D'
+            },
+            monster: {
+                name: '怪物卡牌',
+                value: 80,
+                color: 'bg-card-monster',
+                icon: 'https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/2e7a9af9430e452d9b3d4cc216058907~tplv-a9rns2rl98-image.image?rcl=20251112170317AAEC5951FCA2D2B739D5&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1765530237&x-signature=hgEkcIZlS3TtP3VifAaDP3J6%2F3U%3D'
+            },
+            forbidden: {
+                name: '禁忌卡牌',
+                value: 20,
+                color: 'bg-card-forbidden',
+                icon: 'https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/2e7a9af9430e452d9b3d4cc216058907~tplv-a9rns2rl98-image.image?rcl=20251112170317AAEC5951FCA2D2B739D5&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1765530237&x-signature=hgEkcIZlS3TtP3VifAaDP3J6%2F3U%3D'
+            }
+        };
+        
+        // 强化类型
+        const enhanceTypes = {
+            sparkle: {
+                name: '灵光一闪',
+                value: 10,
+                icon: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6d3d912d654e42e2a4417fda4e7a4ab1~tplv-a9rns2rl98-image.image?rcl=20251112170317AAEC5951FCA2D2B739D5&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1765530247&x-signature=I8hHqSkDfosyZ3Sb1j8v1cLEKNs%3D',
+                color: 'bg-blue-500'
+            },
+            divine: {
+                name: '神之一闪',
+                value: 20,
+                icon: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6d3d912d654e42e2a4417fda4e7a4ab1~tplv-a9rns2rl98-image.image?rcl=20251112170317AAEC5951FCA2D2B739D5&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1765530247&x-signature=I8hHqSkDfosyZ3Sb1j8v1cLEKNs%3D',
+                color: 'bg-yellow-500'
+            }
+        };
+        
+        // 移除和复制的成本数组（索引0表示第一次操作，索引1表示第二次，以此类推）
+        const operationCosts = [0, 10, 30, 50, 70];
+        
+        // 应用状态
+        const appState = {
+            ptCapacity: 100,
+            cards: [],
+            nextCardId: 1,
+            removeCount: 0,
+            copyCount: 0,
+            copyOperationCount: 0, // 复制操作次数计数器
+            convertCount: 0,
+            enhanceCount: 0,
+            history: [],
+            saveSlots: []
+        };
+        
+        // DOM元素
+        const elements = {
+            // 容量设置
+            ptCapacityInput: document.getElementById('pt-capacity'),
+            ptCapacityValue: document.getElementById('pt-capacity-value'),
+            resetBtn: document.getElementById('reset-btn'),
+            
+            // 添加卡牌
+            cardTypeSelect: document.getElementById('card-type'),
+            addCardBtn: document.getElementById('add-card-btn'),
+            
+            // 卡牌列表
+            cardList: document.getElementById('card-list'),
+            
+            // 移除卡牌
+            removeCardSelect: document.getElementById('remove-card-select'),
+            removeCardBtn: document.getElementById('remove-card-btn'),
+            
+            // 复制卡牌
+            copyCardSelect: document.getElementById('copy-card-select'),
+            copyCardBtn: document.getElementById('copy-card-btn'),
+            
+            // 转化卡牌
+            convertCardSelect: document.getElementById('convert-card-select'),
+            convertCardBtn: document.getElementById('convert-card-btn'),
+            
+            // 强化卡牌
+            enhanceCardSelect: document.getElementById('enhance-card-select'),
+            enhanceTypeSelect: document.getElementById('enhance-type-select'),
+            enhanceCardBtn: document.getElementById('enhance-card-btn'),
+            
+            // PT值显示
+            displayPtCapacity: document.getElementById('display-pt-capacity'),
+            displayCardsValue: document.getElementById('display-cards-value'),
+            displayRemoveValue: document.getElementById('display-remove-value'),
+            displayCopyValue: document.getElementById('display-copy-value'),
+            displayConvertValue: document.getElementById('display-convert-value'),
+            displayEnhanceValue: document.getElementById('display-enhance-value'),
+            displayTotalPt: document.getElementById('display-total-pt'),
+            displayRemainingPt: document.getElementById('display-remaining-pt'),
+            
+            // 历史记录
+            historyList: document.getElementById('history-list'),
+            
+            // 存档管理
+            saveNameInput: document.getElementById('save-name'),
+            saveBtn: document.getElementById('save-btn'),
+            loadSaveSelect: document.getElementById('load-save-select'),
+            loadBtn: document.getElementById('load-btn'),
+            deleteSaveBtn: document.getElementById('delete-save-btn'),
+            
+            // 模板
+            cardTemplate: document.getElementById('card-template'),
+            historyTemplate: document.getElementById('history-template')
+        };
+        
+        // 初始化应用
+        function initApp() {
+            // 设置PT容量上限
+            elements.ptCapacityInput.value = appState.ptCapacity;
+            elements.ptCapacityValue.textContent = appState.ptCapacity;
+            elements.displayPtCapacity.textContent = appState.ptCapacity;
+            
+            // 添加初始卡牌（3张基础卡，2张独特卡）
+            addInitialCards();
+            
+            // 更新UI
+            updateCardList();
+            updateSelectOptions();
+            updatePTValues();
+            
+            // 加载保存的存档
+            loadSaveSlots();
+            
+            // 添加事件监听器
+            addEventListeners();
+        }
+        
+        // 添加初始卡牌
+        function addInitialCards() {
+            // 添加3张基础卡
+            for (let i = 0; i < 3; i++) {
+                const card = createCard('basic');
+                appState.cards.push(card);
+                
+                // 添加到历史记录
+                addHistory('add', card, 0);
+            }
+            
+            // 添加2张独特卡
+            for (let i = 0; i < 2; i++) {
+                const card = createCard('unique');
+                appState.cards.push(card);
+                
+                // 添加到历史记录
+                addHistory('add', card, 0);
+            }
+            
+            appState.nextCardId = 6; // 下一张卡牌ID从6开始
+        }
+        
+        // 创建卡牌
+        function createCard(type) {
+            // 生成默认名称
+            const defaultName = cardTypes[type].name;
+            
+            return {
+                id: appState.nextCardId++,
+                type: type,
+                name: defaultName,
+                enhanceType: null,
+                isEnhanced: false,
+                isConverted: false
+            };
+        }
+        
+        // 更新卡牌列表UI
+        function updateCardList() {
+            elements.cardList.innerHTML = '';
+            
+            if (appState.cards.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.className = 'col-span-full text-gray-400 text-center py-8';
+                emptyMessage.textContent = '当前没有卡牌';
+                elements.cardList.appendChild(emptyMessage);
+                return;
+            }
+            
+            appState.cards.forEach(card => {
+                const cardElement = createCardElement(card);
+                elements.cardList.appendChild(cardElement);
+            });
+        }
+        
+        // 创建卡牌元素
+        function createCardElement(card) {
+            const template = elements.cardTemplate.content.cloneNode(true);
+            const cardElement = template.querySelector('.card');
+            
+            // 设置卡牌ID
+            cardElement.dataset.cardId = card.id;
+            
+            // 设置卡牌图标
+            const iconElement = cardElement.querySelector('.card-icon');
+            iconElement.className = `card-icon w-10 h-10 rounded-full flex items-center justify-center ${cardTypes[card.type].color}`;
+            
+            const iconImg = iconElement.querySelector('img');
+            iconImg.src = cardTypes[card.type].icon;
+            iconImg.alt = cardTypes[card.type].name;
+            
+            // 设置卡牌名称和类型
+            const cardNameElement = cardElement.querySelector('.card-name');
+            cardNameElement.textContent = card.name || cardTypes[card.type].name;
+            cardElement.querySelector('.card-type').textContent = cardTypes[card.type].name;
+            
+            // 使卡牌名称可编辑
+            cardNameElement.addEventListener('click', function() {
+                const currentName = cardNameElement.textContent;
+                const newName = prompt('请输入卡牌名称:', currentName);
+                
+                if (newName !== null && newName.trim() !== '') {
+                    // 更新卡牌名称
+                    const cardId = parseInt(cardElement.dataset.cardId);
+                    const cardIndex = appState.cards.findIndex(c => c.id === cardId);
+                    
+                    if (cardIndex !== -1) {
+                        appState.cards[cardIndex].name = newName.trim();
+                        cardNameElement.textContent = newName.trim();
+                    }
+                }
+            });
+            
+            // 添加可编辑提示样式
+            cardNameElement.classList.add('cursor-pointer', 'hover:text-primary', 'transition-colors', 'duration-200');
+            
+            // 设置卡牌价值
+            const cardValue = cardTypes[card.type].value + (card.enhanceType ? getEnhanceValue(card) : 0);
+            cardElement.querySelector('.card-value').textContent = `${cardValue} PT`;
+            
+            // 设置卡牌ID显示
+            cardElement.querySelector('.card-id').textContent = `ID: ${card.id}`;
+            
+            // 设置强化状态
+            const enhancementStatus = cardElement.querySelector('.card-enhancement-status');
+            const enhancementIcon = cardElement.querySelector('.card-enhancement-icon');
+            
+            if (card.isEnhanced) {
+                enhancementStatus.textContent = enhanceTypes[card.enhanceType].name;
+                enhancementIcon.classList.remove('hidden');
+                enhancementIcon.className = `card-enhancement-icon w-4 h-4 rounded-full ${enhanceTypes[card.enhanceType].color}`;
+            } else {
+                enhancementStatus.textContent = '未强化';
+                enhancementIcon.classList.add('hidden');
+            }
+            
+            return cardElement;
+        }
+        
+        // 更新选择框选项
+        function updateSelectOptions() {
+            // 清空所有选择框
+            elements.removeCardSelect.innerHTML = '<option value="">选择要移除的卡牌...</option>';
+            elements.copyCardSelect.innerHTML = '<option value="">选择要复制的卡牌...</option>';
+            elements.convertCardSelect.innerHTML = '<option value="">选择要转化的卡牌...</option>';
+            elements.enhanceCardSelect.innerHTML = '<option value="">选择要强化的卡牌...</option>';
+            
+            // 为每张卡牌添加选项
+            appState.cards.forEach(card => {
+                const cardName = `${cardTypes[card.type].name} (ID: ${card.id})`;
+                
+                // 添加到移除选择框
+                const removeOption = document.createElement('option');
+                removeOption.value = card.id;
+                removeOption.textContent = cardName;
+                elements.removeCardSelect.appendChild(removeOption);
+                
+                // 添加到复制选择框（仅非基础卡牌）
+                if (card.type !== 'basic') {
+                    const copyOption = document.createElement('option');
+                    copyOption.value = card.id;
+                    copyOption.textContent = cardName;
+                    elements.copyCardSelect.appendChild(copyOption);
+                }
+                
+                // 添加到转化选择框
+                const convertOption = document.createElement('option');
+                convertOption.value = card.id;
+                convertOption.textContent = cardName;
+                elements.convertCardSelect.appendChild(convertOption);
+                
+                // 添加到强化选择框（仅未强化且非基础卡牌）
+                if (!card.isEnhanced && card.type !== 'basic') {
+                    const enhanceOption = document.createElement('option');
+                    enhanceOption.value = card.id;
+                    enhanceOption.textContent = cardName;
+                    elements.enhanceCardSelect.appendChild(enhanceOption);
+                }
+            });
+        }
+        
+        // 更新PT值显示
+        function updatePTValues() {
+            // 计算卡牌总价值
+            const cardsValue = calculateCardsValue();
+            
+            // 计算移除总价值
+            const removeValue = calculateRemoveValue();
+            
+            // 计算复制总价值
+            const copyValue = calculateCopyValue();
+            
+            // 计算转化总价值
+            const convertValue = calculateConvertValue();
+            
+            // 计算强化总价值
+            const enhanceValue = calculateEnhanceValue();
+            
+            // 计算总PT值（注意：移除操作会减少总PT值，其他操作会增加总PT值）
+            const totalPT = cardsValue + copyValue + convertValue + enhanceValue - removeValue;
+            
+            // 计算剩余PT容量
+            const remainingPT = appState.ptCapacity - totalPT;
+            
+            // 更新显示
+            elements.displayPtCapacity.textContent = appState.ptCapacity;
+            elements.displayCardsValue.textContent = `+${cardsValue}`;
+            elements.displayRemoveValue.textContent = removeValue >= 0 ? `-${removeValue}` : `+${Math.abs(removeValue)}`;
+            elements.displayCopyValue.textContent = `+${copyValue}`;
+            elements.displayConvertValue.textContent = `+${convertValue}`;
+            elements.displayEnhanceValue.textContent = `+${enhanceValue}`;
+            elements.displayTotalPt.textContent = totalPT;
+            elements.displayRemainingPt.textContent = remainingPT;
+            
+            // 更新样式
+            const totalPtElement = elements.displayTotalPt;
+            const remainingPtElement = elements.displayRemainingPt;
+            
+            // 重置所有动画类
+            totalPtElement.className = 'text-3xl font-bold';
+            remainingPtElement.className = 'text-3xl font-bold';
+            
+            // 根据剩余容量设置样式
+            if (remainingPT < 0) {
+                // 超过容量上限
+                totalPtElement.classList.add('text-danger', 'animate-pulse-danger');
+                remainingPtElement.classList.add('text-danger', 'animate-pulse-danger');
+            } else if (remainingPT < appState.ptCapacity * 0.2) {
+                // 容量不足20%
+                totalPtElement.classList.add('text-warning', 'animate-pulse-warning');
+                remainingPtElement.classList.add('text-warning', 'animate-pulse-warning');
+            } else {
+                // 容量充足
+                totalPtElement.classList.add('text-glow', 'animate-glow');
+                remainingPtElement.classList.add('text-success', 'animate-glow');
+            }
+            
+            // 添加动画效果
+            totalPtElement.classList.add('scale-110');
+            remainingPtElement.classList.add('scale-110');
+            setTimeout(() => {
+                totalPtElement.classList.remove('scale-110');
+                remainingPtElement.classList.remove('scale-110');
+            }, 300);
+        }
+        
+        // 计算卡牌总价值
+        function calculateCardsValue() {
+            return appState.cards.reduce((total, card) => {
+                const cardValue = cardTypes[card.type].value;
+                // 不再计算卡牌的强化价值，因为强化价值已经通过appState.enhanceCount单独计算
+                return total + cardValue;
+            }, 0);
+        }
+        
+        // 计算移除总价值
+        function calculateRemoveValue() {
+            // 移除价值在history中记录，这里直接返回appState中的值
+            return appState.removeCount;
+        }
+        
+        // 计算复制总价值
+        function calculateCopyValue() {
+            // 复制价值在history中记录，这里直接返回appState中的值
+            return appState.copyCount;
+        }
+        
+        // 计算转化总价值
+        function calculateConvertValue() {
+            // 每次转化价值为10PT
+            return appState.convertCount * 10;
+        }
+        
+        // 计算强化总价值
+        function calculateEnhanceValue() {
+            return appState.enhanceCount;
+        }
+        
+        // 获取强化价值
+        function getEnhanceValue(card) {
+            if (!card.isEnhanced) return 0;
+            
+            // 独特卡牌的灵光一闪强化价值为0
+            if (card.type === 'unique' && card.enhanceType === 'sparkle') {
+                return 0;
+            }
+            
+            return enhanceTypes[card.enhanceType].value;
+        }
+        
+        // 添加历史记录
+        function addHistory(action, card, value) {
+            const timestamp = new Date().toLocaleTimeString();
+            
+            let historyItem = {
+                action: action,
+                card: card ? { ...card } : null,
+                value: value,
+                timestamp: timestamp
+            };
+            
+            appState.history.push(historyItem);
+            updateHistoryList();
+        }
+        
+        // 更新历史记录列表
+        function updateHistoryList() {
+            elements.historyList.innerHTML = '';
+            
+            if (appState.history.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.className = 'text-gray-400 text-center py-4';
+                emptyMessage.textContent = '暂无操作记录';
+                elements.historyList.appendChild(emptyMessage);
+                return;
+            }
+            
+            // 倒序显示历史记录（最新的在上面）
+            const reversedHistory = [...appState.history].reverse();
+            
+            reversedHistory.forEach(history => {
+                const historyElement = createHistoryElement(history);
+                elements.historyList.appendChild(historyElement);
+            });
+        }
+        
+        // 创建历史记录元素
+        function createHistoryElement(history) {
+            const template = elements.historyTemplate.content.cloneNode(true);
+            const historyElement = template.querySelector('.history-item');
+            
+            // 设置图标
+            const iconElement = historyElement.querySelector('.history-icon');
+            const icon = iconElement.querySelector('i');
+            
+            // 设置动作文本
+            const actionElement = historyElement.querySelector('.history-action');
+            const detailsElement = historyElement.querySelector('.history-details');
+            
+            // 设置时间戳
+            historyElement.querySelector('.history-timestamp').textContent = history.timestamp;
+            
+            switch (history.action) {
+                case 'add':
+                    icon.className = 'fa fa-plus';
+                    iconElement.className = 'history-icon w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-green-500';
+                    actionElement.textContent = '添加了卡牌';
+                    detailsElement.textContent = `${cardTypes[history.card.type].name} (+${history.value} PT)`;
+                    break;
+                case 'remove':
+                    icon.className = 'fa fa-trash';
+                    iconElement.className = 'history-icon w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-red-500';
+                    actionElement.textContent = '移除了卡牌';
+                    detailsElement.textContent = `${cardTypes[history.card.type].name} (${history.value >= 0 ? '+' : ''}${history.value} PT)`;
+                    break;
+                case 'copy':
+                    icon.className = 'fa fa-clone';
+                    iconElement.className = 'history-icon w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-yellow-500';
+                    actionElement.textContent = '复制了卡牌';
+                    detailsElement.textContent = `${cardTypes[history.card.type].name} (${history.value >= 0 ? '+' : ''}${history.value} PT)`;
+                    break;
+                case 'convert':
+                    icon.className = 'fa fa-exchange';
+                    iconElement.className = 'history-icon w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-blue-500';
+                    actionElement.textContent = '转化了卡牌';
+                    detailsElement.textContent = `${cardTypes[history.card.type].name} → 中立卡牌 (+${history.value} PT)`;
+                    break;
+                case 'enhance':
+                    icon.className = 'fa fa-star';
+                    iconElement.className = 'history-icon w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-purple-500';
+                    actionElement.textContent = '强化了卡牌';
+                    detailsElement.textContent = `${cardTypes[history.card.type].name} (${enhanceTypes[history.card.enhanceType].name}, +${history.value} PT)`;
+                    break;
+                case 'reset':
+                    icon.className = 'fa fa-refresh';
+                    iconElement.className = 'history-icon w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-gray-500';
+                    actionElement.textContent = '重置了计算器';
+                    detailsElement.textContent = '所有数据已重置';
+                    break;
+                case 'capacity':
+                    icon.className = 'fa fa-sliders';
+                    iconElement.className = 'history-icon w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-gray-500';
+                    actionElement.textContent = '修改了PT容量上限';
+                    detailsElement.textContent = `PT容量上限: ${history.previousValue} → ${history.value}`;
+                    break;
+            }
+            
+            return historyElement;
+        }
+        
+        // 撤销功能已移除
+        
+        // 保存当前状态
+        function saveCurrentState(saveName) {
+            if (!saveName) {
+                alert('请输入存档名称');
+                return;
+            }
+            
+            const saveData = {
+                name: saveName,
+                date: new Date().toLocaleString(),
+                data: {
+                    ptCapacity: appState.ptCapacity,
+                    cards: JSON.parse(JSON.stringify(appState.cards)),
+                    nextCardId: appState.nextCardId,
+                    removeCount: appState.removeCount,
+                    copyCount: appState.copyCount,
+                    copyOperationCount: appState.copyOperationCount,
+                    convertCount: appState.convertCount,
+                    enhanceCount: appState.enhanceCount,
+                    history: JSON.parse(JSON.stringify(appState.history))
+                }
+            };
+            
+            // 保存到localStorage
+            const saves = JSON.parse(localStorage.getItem('kaethCalculatorSaves') || '[]');
+            saves.push(saveData);
+            localStorage.setItem('kaethCalculatorSaves', JSON.stringify(saves));
+            
+            // 更新存档列表
+            loadSaveSlots();
+            
+            // 添加到历史记录
+            addHistory('save', null, 0);
+            
+            alert(`存档 "${saveName}" 已保存`);
+        }
+        
+        // 加载存档列表
+        function loadSaveSlots() {
+            const saves = JSON.parse(localStorage.getItem('kaethCalculatorSaves') || '[]');
+            appState.saveSlots = saves;
+            
+            // 更新存档选择框
+            elements.loadSaveSelect.innerHTML = '<option value="">选择要加载的存档...</option>';
+            
+            saves.forEach((save, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${save.name} (${save.date})`;
+                elements.loadSaveSelect.appendChild(option);
+            });
+        }
+        
+        // 加载存档
+        function loadSave(index) {
+            const saves = JSON.parse(localStorage.getItem('kaethCalculatorSaves') || '[]');
+            
+            if (index < 0 || index >= saves.length) {
+                alert('无效的存档索引');
+                return;
+            }
+            
+            const saveData = saves[index];
+            
+            // 保存当前状态到历史记录
+            addHistory('load', null, 0);
+            
+            // 加载存档数据
+            appState.ptCapacity = saveData.data.ptCapacity;
+            appState.cards = JSON.parse(JSON.stringify(saveData.data.cards));
+            appState.nextCardId = saveData.data.nextCardId;
+            appState.removeCount = saveData.data.removeCount;
+            appState.copyCount = saveData.data.copyCount;
+            appState.copyOperationCount = saveData.data.copyOperationCount || 0; // 处理旧存档
+            appState.convertCount = saveData.data.convertCount;
+            appState.enhanceCount = saveData.data.enhanceCount;
+            appState.history = JSON.parse(JSON.stringify(saveData.data.history));
+            
+            // 更新UI
+            elements.ptCapacityInput.value = appState.ptCapacity;
+            elements.ptCapacityValue.textContent = appState.ptCapacity;
+            
+            updateCardList();
+            updateSelectOptions();
+            updatePTValues();
+            updateHistoryList();
+            
+            alert(`已加载存档 "${saveData.name}"`);
+        }
+        
+        // 删除存档
+        function deleteSave(index) {
+            const saves = JSON.parse(localStorage.getItem('kaethCalculatorSaves') || '[]');
+            
+            if (index < 0 || index >= saves.length) {
+                alert('无效的存档索引');
+                return;
+            }
+            
+            if (confirm(`确定要删除存档 "${saves[index].name}" 吗？`)) {
+                saves.splice(index, 1);
+                localStorage.setItem('kaethCalculatorSaves', JSON.stringify(saves));
+                
+                // 更新存档列表
+                loadSaveSlots();
+                
+                alert('存档已删除');
+            }
+        }
+        
+        // 重置计算器
+        function resetCalculator() {
+            // 保存当前状态到历史记录
+            const resetHistory = {
+                action: 'reset',
+                previousCards: JSON.parse(JSON.stringify(appState.cards)),
+                previousNextCardId: appState.nextCardId,
+                previousRemoveCount: appState.removeCount,
+                previousCopyCount: appState.copyCount,
+            previousCopyOperationCount: appState.copyOperationCount,
+            previousConvertCount: appState.convertCount,
+            previousEnhanceCount: appState.enhanceCount,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            appState.history.push(resetHistory);
+            
+            // 重置卡牌相关状态（保留PT容量上限）
+            appState.cards = [];
+            appState.nextCardId = 1;
+            appState.removeCount = 0;
+            appState.copyCount = 0;
+            appState.copyOperationCount = 0;
+            appState.convertCount = 0;
+            appState.enhanceCount = 0;
+            
+            // 添加初始卡牌
+            addInitialCards();
+            
+            // 更新UI
+            updateCardList();
+            updateSelectOptions();
+            updatePTValues();
+        }
+        
+        // 添加事件监听器
+        function addEventListeners() {
+            // PT容量上限滑块
+            elements.ptCapacityInput.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                elements.ptCapacityValue.textContent = value;
+                
+                // 保存之前的值用于撤销
+                const previousValue = appState.ptCapacity;
+                
+                appState.ptCapacity = value;
+                
+                // 添加到历史记录
+                const historyItem = {
+                    action: 'capacity',
+                    value: value,
+                    previousValue: previousValue,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                appState.history.push(historyItem);
+                
+                updatePTValues();
+            });
+            
+            // 重置按钮
+            elements.resetBtn.addEventListener('click', resetCalculator);
+            
+            // 添加卡牌按钮
+            elements.addCardBtn.addEventListener('click', function() {
+                const cardType = elements.cardTypeSelect.value;
+                const card = createCard(cardType);
+                
+                appState.cards.push(card);
+                
+                // 添加到历史记录
+                addHistory('add', card, cardTypes[cardType].value);
+                
+                // 更新UI
+                updateCardList();
+                updateSelectOptions();
+                updatePTValues();
+            });
+            
+            // 移除卡牌按钮
+            elements.removeCardBtn.addEventListener('click', function() {
+                const cardId = parseInt(elements.removeCardSelect.value);
+                
+                if (!cardId) {
+                    alert('请选择要移除的卡牌');
+                    return;
+                }
+                
+                const cardIndex = appState.cards.findIndex(card => card.id === cardId);
+                
+                if (cardIndex === -1) {
+                    alert('未找到选中的卡牌');
+                    return;
+                }
+                
+                const card = appState.cards[cardIndex];
+                
+                // 计算移除价值 - 从最近一次重置后的移除操作开始计算
+                // 找到最近一次重置操作的索引
+                let lastResetIndex = -1;
+                for (let i = appState.history.length - 1; i >= 0; i--) {
+                    if (appState.history[i].action === 'reset') {
+                        lastResetIndex = i;
+                        break;
+                    }
+                }
+                // 计算重置后的移除操作数量
+                const recentRemoveCount = appState.history.filter((h, index) => h.action === 'remove' && index > lastResetIndex).length;
+                const removeIndex = Math.min(recentRemoveCount, operationCosts.length - 1);
+                let removeValue = operationCosts[removeIndex];
+                
+                // 如果是基础卡牌或强化后的卡牌，额外增加20PT
+                if (card.type === 'basic' || card.isEnhanced) {
+                    removeValue += 20;
+                }
+                
+                // 移除卡牌
+                appState.cards.splice(cardIndex, 1);
+                appState.removeCount -= removeValue;
+                
+                // 添加到历史记录
+                addHistory('remove', card, removeValue);
+                
+                // 更新UI
+                updateCardList();
+                updateSelectOptions();
+                updatePTValues();
+            });
+            
+            // 复制卡牌按钮
+            elements.copyCardBtn.addEventListener('click', function() {
+                const cardId = parseInt(elements.copyCardSelect.value);
+                
+                if (!cardId) {
+                    alert('请选择要复制的卡牌');
+                    return;
+                }
+                
+                const cardIndex = appState.cards.findIndex(card => card.id === cardId);
+                
+                if (cardIndex === -1) {
+                    alert('未找到选中的卡牌');
+                    return;
+                }
+                
+                const originalCard = appState.cards[cardIndex];
+                
+                // 计算复制价值（使用复制操作次数作为索引）
+                const copyIndex = Math.min(appState.copyOperationCount, operationCosts.length - 1);
+                let copyValue = operationCosts[copyIndex];
+                
+                // 如果是强化后的卡牌，额外增加强化价值
+                if (originalCard.isEnhanced) {
+                    copyValue += getEnhanceValue(originalCard);
+                }
+                
+                // 复制卡牌
+                const newCard = {
+                    id: appState.nextCardId++,
+                    type: originalCard.type,
+                    enhanceType: originalCard.enhanceType,
+                    isEnhanced: originalCard.isEnhanced,
+                    isConverted: originalCard.isConverted
+                };
+                
+                appState.cards.push(newCard);
+                appState.copyCount += copyValue;
+                appState.copyOperationCount += 1;
+                
+                // 添加到历史记录
+                addHistory('copy', newCard, copyValue);
+                
+                // 更新UI
+                updateCardList();
+                updateSelectOptions();
+                updatePTValues();
+            });
+            
+            // 转化卡牌按钮
+            elements.convertCardBtn.addEventListener('click', function() {
+                const cardId = parseInt(elements.convertCardSelect.value);
+                
+                if (!cardId) {
+                    alert('请选择要转化的卡牌');
+                    return;
+                }
+                
+                const cardIndex = appState.cards.findIndex(card => card.id === cardId);
+                
+                if (cardIndex === -1) {
+                    alert('未找到选中的卡牌');
+                    return;
+                }
+                
+                const originalCard = { ...appState.cards[cardIndex] };
+                
+                // 转化卡牌为中立卡牌
+                appState.cards[cardIndex].type = 'neutral';
+                appState.cards[cardIndex].isConverted = true;
+                
+                // 转化价值为10PT
+                const convertValue = 10;
+                appState.convertCount++;
+                
+                // 添加到历史记录
+                const historyItem = {
+                    action: 'convert',
+                    card: { ...appState.cards[cardIndex] },
+                    originalCard: originalCard,
+                    value: convertValue,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                
+                appState.history.push(historyItem);
+                
+                // 更新UI
+                updateCardList();
+                updateSelectOptions();
+                updatePTValues();
+                updateHistoryList();
+            });
+            
+            // 强化卡牌按钮
+            elements.enhanceCardBtn.addEventListener('click', function() {
+                const cardId = parseInt(elements.enhanceCardSelect.value);
+                const enhanceType = elements.enhanceTypeSelect.value;
+                
+                if (!cardId) {
+                    alert('请选择要强化的卡牌');
+                    return;
+                }
+                
+                const cardIndex = appState.cards.findIndex(card => card.id === cardId);
+                
+                if (cardIndex === -1) {
+                    alert('未找到选中的卡牌');
+                    return;
+                }
+                
+                const card = appState.cards[cardIndex];
+                
+                if (card.isEnhanced) {
+                    alert('该卡牌已被强化');
+                    return;
+                }
+                
+                if (card.type === 'basic') {
+                    alert('基础卡牌无法强化');
+                    return;
+                }
+                
+                // 强化卡牌
+                card.enhanceType = enhanceType;
+                card.isEnhanced = true;
+                
+                // 计算强化价值
+                const enhanceValue = getEnhanceValue(card);
+                appState.enhanceCount += enhanceValue;
+                
+                // 添加到历史记录
+                addHistory('enhance', card, enhanceValue);
+                
+                // 更新UI
+                updateCardList();
+                updateSelectOptions();
+                updatePTValues();
+            });
+            
+            // 撤销功能已移除
+            
+            // 保存按钮
+            elements.saveBtn.addEventListener('click', function() {
+                const saveName = elements.saveNameInput.value.trim();
+                saveCurrentState(saveName);
+            });
+            
+            // 加载按钮
+            elements.loadBtn.addEventListener('click', function() {
+                const saveIndex = parseInt(elements.loadSaveSelect.value);
+                
+                if (isNaN(saveIndex)) {
+                    alert('请选择要加载的存档');
+                    return;
+                }
+                
+                loadSave(saveIndex);
+            });
+            
+            // 删除存档按钮
+            elements.deleteSaveBtn.addEventListener('click', function() {
+                const saveIndex = parseInt(elements.loadSaveSelect.value);
+                
+                if (isNaN(saveIndex)) {
+                    alert('请选择要删除的存档');
+                    return;
+                }
+                
+                deleteSave(saveIndex);
+            });
+        }
+        
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
